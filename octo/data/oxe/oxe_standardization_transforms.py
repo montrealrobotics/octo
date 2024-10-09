@@ -24,6 +24,21 @@ from octo.data.utils.data_utils import (
 )
 
 
+def droid_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
+    # first flip gripper values to be +1 = open, 0 = close
+    gripper_action = tf.clip_by_value(1.0 - trajectory["action_dict"]["gripper_position"], 0, 1)
+    trajectory["action"] = tf.concat(
+        [
+            # get delta ee pose action
+            tf.cast(trajectory['action_dict']['cartesian_position'] - trajectory['observation']['cartesian_position'], tf.float32)[:, :6],
+            binarize_gripper_actions(tf.cast(trajectory['action_dict']['gripper_position'], tf.float32)),
+        ],
+        axis=1,
+    )
+    trajectory["observation"]["proprio"] = trajectory["observation"]["cartesian_position"]
+    return trajectory
+
+
 def bridge_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
     # NOTE: this is not actually the official OXE copy of bridge, it is our own more up-to-date copy that you
     # can find at https://rail.eecs.berkeley.edu/datasets/bridge_release/data/tfds/
