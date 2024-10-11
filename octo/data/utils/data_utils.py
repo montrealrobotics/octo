@@ -445,3 +445,46 @@ def allocate_threads(n: Optional[int], weights: np.ndarray):
     for i in np.argsort(fractional)[::-1][: int(n)]:
         allocation[i] += 1
     return allocation
+
+def euler_to_rotation_matrix(euler_angles):
+    """Convert Euler angles (roll, pitch, yaw) to a rotation matrix."""
+    roll, pitch, yaw = euler_angles[0], euler_angles[1], euler_angles[2]
+    Rx = tf.stack([[1, 0, 0],
+                   [0, tf.cos(roll), -tf.sin(roll)],
+                   [0, tf.sin(roll), tf.cos(roll)]])
+    
+    Ry = tf.stack([[tf.cos(pitch), 0, tf.sin(pitch)],
+                   [0, 1, 0],
+                   [-tf.sin(pitch), 0, tf.cos(pitch)]])
+    
+    Rz = tf.stack([[tf.cos(yaw), -tf.sin(yaw), 0],
+                   [tf.sin(yaw), tf.cos(yaw), 0],
+                   [0, 0, 1]])
+    
+    return tf.matmul(Rz, tf.matmul(Ry, Rx))
+
+def pose_to_transformation_matrix(pose):
+    """Convert a 6D pose vector to a 4x4 transformation matrix."""
+    translation = pose[:3]
+    rotation_matrix = euler_to_rotation_matrix(pose[3:])
+    transformation_matrix = tf.eye(4)
+    transformation_matrix[:3, :3] = rotation_matrix
+    transformation_matrix[:3, 3] = translation
+    return transformation_matrix
+
+def compute_relative_pose(pose1, pose2):
+    """Compute the relative pose from pose1 to pose2."""
+    T1 = pose_to_transformation_matrix(pose1)
+    T2 = pose_to_transformation_matrix(pose2)
+
+    # Inverse of T1
+    T1_inv = tf.linalg.inv(T1)
+
+    # Relative pose: T2 * T1_inv
+    T_relative = tf.matmul(T2, T1_inv)
+
+    # Extract relative translation and rotation (as Euler angles)
+    relative_translation = T_relative[:3, 3]
+    relative_rotation = tf.linalg.det(T_relative[:3, :3])  # Getting rotation info, modify as needed
+
+    return tf.concat([relative_translation, tf.zeros(3)], axis=0)  # Modify to return angles if needed
