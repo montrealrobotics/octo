@@ -447,24 +447,70 @@ def allocate_threads(n: Optional[int], weights: np.ndarray):
         allocation[i] += 1
     return allocation
 
+def euler_to_quaternion(euler_angles):
+    """Convert Euler angles (roll, pitch, yaw) to a quaternion."""
+    roll, pitch, yaw = euler_angles[:, 0], euler_angles[:, 1], euler_angles[:, 2]
+    cy = tf.cos(yaw * 0.5)
+    sy = tf.sin(yaw * 0.5)
+    cp = tf.cos(pitch * 0.5)
+    sp = tf.sin(pitch * 0.5)
+    cr = tf.cos(roll * 0.5)
+    sr = tf.sin(roll * 0.5)
+
+    q_w = cr * cp * cy + sr * sp * sy
+    q_x = sr * cp * cy - cr * sp * sy
+    q_y = cr * sp * cy + sr * cp * sy
+    q_z = cr * cp * sy - sr * sp * cy
+
+    return tf.stack([q_x, q_y, q_z, q_w], axis=-1)
+
+def quaternion_conjugate(q):
+    """Compute the conjugate of a quaternion."""
+    return tf.concat([-q[..., :3], q[..., 3:4]], axis=-1)
+
+def quaternion_multiply(q1, q2):
+    """Multiply two quaternions."""
+    w1, x1, y1, z1 = tf.unstack(q1, axis=-1)
+    w2, x2, y2, z2 = tf.unstack(q2, axis=-1)
+
+    return tf.stack([
+        w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2,
+        w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2,
+        w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2,
+        w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2
+    ], axis=-1)
+
+def quaternion_to_euler(q):
+    """Convert quaternion to Euler angles (roll, pitch, yaw)."""
+    x, y, z, w = tf.unstack(q, axis=-1)
+
+    t0 = +2.0 * (w * x + y * z)
+    t1 = +1.0 - 2.0 * (x * x + y * y)
+    roll_x = tf.atan2(t0, t1)
+
+    t2 = +2.0 * (w * y - z * x)
+    t2 = tf.clip_by_value(t2, -1.0, 1.0)
+    pitch_y = tf.asin(t2)
+
+    t3 = +2.0 * (w * z + x * y)
+    t4 = +1.0 - 2.0 * (y * y + z * z)
+    yaw_z = tf.atan2(t3, t4)
+
+    return tf.stack([roll_x, pitch_y, yaw_z], axis=-1)
+
 def compute_relative_pose(pose1, pose2):
     """Compute the relative pose from pose1 to pose2 using Euler angles."""
-    # Extract translation and rotation
-    trans1, rot1 = pose1[:3], pose1[3:]
-    trans2, rot2 = pose2[:3], pose2[3:]
+    trans1, rot1 = pose1[..., :3], pose1[..., 3:]
+    trans2, rot2 = pose2[..., :3], pose2[..., 3:]
 
-    # Compute relative translation
     relative_translation = trans2 - trans1
 
-    # Create rotation objects from Euler angles
-    r1 = R.from_euler('xyz', rot1)
-    r2 = R.from_euler('xyz', rot2)
+    q1 = euler_to_quaternion(rot1)
+    q2 = euler_to_quaternion(rot2)
 
-    # Compute relative rotation
-    relative_rotation = r2 * r1.inv()  # r2 * r1 inverse
+    q1_inv = quaternion_conjugate(q1)
+    relative_rotation = quaternion_multiply(q2, q1_inv)
 
-    # Convert back to Euler angles (if needed)
-    relative_rotation_euler = relative_rotation.as_euler('xyz')
+    relative_rotation_euler = quaternion_to_euler(relative_rotation)
 
-    # Combine results
-    return np.concatenate([relative_translation, relative_rotation_euler])
+    return tf.concat([relative_translation, relative_rotation_euler], axis=-1)
