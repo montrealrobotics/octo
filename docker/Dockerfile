@@ -31,7 +31,7 @@ RUN pip install tensorflow[and-cuda]==2.15.1 \
     && pip install git+https://github.com/nathanrooy/simulated-annealing \
     && pip install numpy==1.24.4 \
     && pip install --upgrade "jax[cuda11_pip]==0.4.20" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html \
-    && pip install debugpy
+    && pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
 # Upgrade pip so we can install SimplerEnv later
 RUN pip3 install -U pip 
