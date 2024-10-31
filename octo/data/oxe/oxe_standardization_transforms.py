@@ -21,7 +21,23 @@ from octo.data.utils.data_utils import (
     invert_gripper_actions,
     rel2abs_gripper_actions,
     relabel_actions,
+    compute_relative_pose,
 )
+
+
+def droid_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
+    # first flip gripper values to be +1 = open, 0 = close
+    gripper_action = tf.clip_by_value(1.0 - trajectory["action_dict"]["gripper_position"], 0, 1)
+    trajectory["action"] = tf.concat(
+        [
+            # get delta ee pose action
+            tf.cast(compute_relative_pose(trajectory['action_dict']['cartesian_position'], trajectory['observation']['cartesian_position']), tf.float32)[:, :6],
+            binarize_gripper_actions(tf.cast(gripper_action, tf.float32)),
+        ],
+        axis=1,
+    )
+    trajectory["observation"]["proprio"] = trajectory["observation"]["cartesian_position"]
+    return trajectory
 
 
 def bridge_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
