@@ -31,7 +31,7 @@ def droid_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
     trajectory["action"] = tf.concat(
         [
             # get delta ee pose action
-            tf.cast(compute_relative_pose(trajectory['action_dict']['cartesian_position'], trajectory['observation']['cartesian_position']), tf.float32)[:, :6],
+            tf.cast(compute_relative_pose(trajectory['observation']['cartesian_position'], trajectory['action_dict']['cartesian_position']), tf.float32)[:, :6],
             binarize_gripper_actions(tf.cast(gripper_action, tf.float32)),
         ],
         axis=1,
