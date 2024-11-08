@@ -251,6 +251,23 @@ class OctoModel:
                 raise ValueError(f"Unknown normalization type: {normalization_type}")
         return action
 
+    @staticmethod
+    def load_dataset_statistics(checkpoint_path: str):
+        if checkpoint_path.startswith("hf://"):
+            checkpoint_path = _download_from_huggingface(
+                checkpoint_path.removeprefix("hf://")
+            )
+
+        # load dataset statistics
+        with tf.io.gfile.GFile(
+            tf.io.gfile.join(checkpoint_path, "dataset_statistics.json"), "r"
+        ) as f:
+            dataset_statistics = json.load(f)
+            dataset_statistics = jax.tree_map(
+                np.array, dataset_statistics, is_leaf=lambda x: not isinstance(x, dict)
+            )
+        return dataset_statistics
+
     @classmethod
     def load_pretrained(
         cls,
