@@ -480,6 +480,7 @@ def quaternion_multiply(q1, q2):
         w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2
     ], axis=-1)
 
+
 def quaternion_to_euler(q):
     """Convert quaternion to Euler angles (roll, pitch, yaw)."""
     x, y, z, w = tf.unstack(q, axis=-1)
@@ -500,19 +501,26 @@ def quaternion_to_euler(q):
 
 def compute_relative_pose(pose1, pose2):
     """Compute the relative pose from pose1 to pose2 using Euler angles."""
+    # Split translation and rotation components
     trans1, rot1 = pose1[..., :3], pose1[..., 3:]
     trans2, rot2 = pose2[..., :3], pose2[..., 3:]
 
+    # Compute relative translation
     relative_translation = trans2 - trans1
 
+    # Convert Euler angles to quaternions
     q1 = euler_to_quaternion(rot1)
     q2 = euler_to_quaternion(rot2)
 
+    # Compute relative rotation
     q1_inv = quaternion_conjugate(q1)
-    # relative_rotation = quaternion_multiply(q1_inv, q2)
     relative_rotation = quaternion_multiply(q2, q1_inv)
 
+    # Normalize the resulting quaternion
+    relative_rotation = tf.linalg.normalize(relative_rotation, axis=-1)[0]
 
+    # Convert back to Euler angles
     relative_rotation_euler = quaternion_to_euler(relative_rotation)
 
+    # Concatenate translation and rotation
     return tf.concat([relative_translation, relative_rotation_euler], axis=-1)
