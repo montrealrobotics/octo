@@ -64,7 +64,7 @@ def main(_):
             name="droid",
             data_dir=FLAGS.data_dir,
             # could add wrist camera here too
-            image_obs_keys={"primary": "exterior_image_1_left"},
+            image_obs_keys={"primary": "exterior_image_1_left",},
             # proprio_obs_key="state",
             language_key="language_instruction",
             standardize_fn=ModuleSpec.create(

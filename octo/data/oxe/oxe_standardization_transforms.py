@@ -36,7 +36,7 @@ def droid_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
         ],
         axis=1,
     )
-    trajectory["observation"]["proprio"] = trajectory["observation"]["cartesian_position"]
+    trajectory["observation"]["proprio"] = trajectory["action_dict"]["cartesian_position"]
     return trajectory
 
 

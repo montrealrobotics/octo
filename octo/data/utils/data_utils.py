@@ -509,7 +509,9 @@ def compute_relative_pose(pose1, pose2):
     q2 = euler_to_quaternion(rot2)
 
     q1_inv = quaternion_conjugate(q1)
+    # relative_rotation = quaternion_multiply(q1_inv, q2)
     relative_rotation = quaternion_multiply(q2, q1_inv)
+
 
     relative_rotation_euler = quaternion_to_euler(relative_rotation)
 
