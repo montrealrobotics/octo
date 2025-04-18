@@ -171,11 +171,16 @@ LIBERO_AUGMENTED = [
     ("libero_original_no_noops", 1.0),
 ]
 
+LIBERO_ORIGINAL = [
+    ("libero_original_no_noops", 1.0),
+]
+
 OXE_NAMED_MIXES = {
     "bridge": BRIDGE_MIX,
     "rtx": RT_X_MIX,
     "rtx_franka": RT_X_MIX + OXE_FRANKA_MIX,
     "oxe_magic_soup": OXE_MAGIC_SOUP,
     "oxe_flex_act_soup": OXE_FLEX_ACT_SOUP,
-    "libero_augmented": LIBERO_AUGMENTED
+    "libero_augmented": LIBERO_AUGMENTED,
+    "libero_original": LIBERO_ORIGINAL,
 }
