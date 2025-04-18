@@ -25,6 +25,30 @@ from octo.data.utils.data_utils import (
 )
 
 
+def libero_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
+    # gripper action is in -1 (open)...1 (close) --> clip to 0...1, flip --> +1 = open, 0 = close
+    gripper_action = trajectory["action"][:, -1:]
+    gripper_action = invert_gripper_actions(tf.clip_by_value(gripper_action, 0, 1))
+
+    trajectory["action"] = tf.concat(
+        [
+            trajectory["action"][:, :6],
+            gripper_action,
+        ],
+        axis=1,
+    )
+    # trajectory["observation"]["EEF_state"] = trajectory["observation"]["state"][:, :6]
+    # trajectory["observation"]["gripper_state"] = trajectory["observation"]["state"][:, -2:]  # 2D gripper state
+    trajectory["observation"]["proprio"] = tf.concat(
+        (
+            trajectory["observation"]["state"][:, :6],
+            trajectory["observation"]["state"][:, -2:],
+        ),
+        axis=-1,
+    )
+    return trajectory
+
+
 def droid_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
     # first flip gripper values to be +1 = open, 0 = close
     gripper_action = tf.clip_by_value(1.0 - trajectory["action_dict"]["gripper_position"], 0, 1)
@@ -1043,4 +1067,6 @@ OXE_STANDARDIZATION_TRANSFORMS = {
     "roboset": roboset_dataset_transform,
     "rh20t": rh20t_dataset_transform,
     "mujoco_manip": mujoco_manip_dataset_transform,
+    "libero_90_no_noops_subtasks": libero_dataset_transform,
+    "libero_original_no_noops": libero_dataset_transform,
 }
