@@ -10,7 +10,7 @@ from octo.utils.spec import ModuleSpec
 
 
 def get_config(
-    transformer_size="vit_s",
+    transformer_size="vit_t",
 ):
     print("Creating config with: ", locals())
     window_size = FieldReference(default=1)
@@ -100,7 +100,7 @@ def get_model_config(transformer_size):
         token_embedding_size=token_embedding_size,
         transformer_kwargs=transformer_kwargs,
         max_horizon=10,
-        use_correct_attention=True,
+        use_correct_attention=False,
     )
 
 

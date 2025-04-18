@@ -165,6 +165,7 @@ def main(_):
         del FLAGS.config.dataset_kwargs["oxe_kwargs"]
 
     FLAGS.config.dataset_kwargs.batch_size //= jax.process_count()
+    print(FLAGS.config.dataset_kwargs)
     train_data = make_interleaved_dataset(**FLAGS.config.dataset_kwargs, train=True)
 
     train_data_iter = map(

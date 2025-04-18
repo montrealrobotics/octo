@@ -9,7 +9,7 @@ get_base_config = imp.load_source(
 ).get_config
 
 from octo.data.utils.text_processing import HFTokenizer
-from octo.model.components.action_heads import DiffusionActionHead
+from octo.model.components.action_heads import DiffusionActionHead, TokenPerDimActionHead
 from octo.model.components.tokenizers import ImageTokenizer, LanguageTokenizer
 from octo.model.components.vit_encoders import SmallStem16
 from octo.utils.spec import ModuleSpec
@@ -50,15 +50,13 @@ def get_config(config_string=None):
         ),
     }
     config["model"]["repeat_task_tokens"] = True
-    config["model"]["readouts"] = {"action": 1}
+    config["model"]["readouts"] = {"action": 28}
     config["model"]["heads"]["action"] = ModuleSpec.create(
-        DiffusionActionHead,
+        TokenPerDimActionHead,
         readout_key="readout_action",
         use_map=False,
         action_horizon=4,
         action_dim=action_dim,
-        n_diffusion_samples=1,
-        dropout_rate=0.0,
     )
 
     # We augment differently for the primary and wrist cameras
@@ -107,7 +105,7 @@ def get_config(config_string=None):
     grad_accumulation_steps = 1
     config = update_config(
         config,
-        num_steps=300000,
+        num_steps=60000,
         window_size=2,
         optimizer=dict(
             frozen_keys=("*hf_model*",),
@@ -123,7 +121,8 @@ def get_config(config_string=None):
         dataset_kwargs=dict(
             oxe_kwargs=dict(
                 data_mix="bridge",
-                data_dir="./tests/debug_dataset",
+                # data_dir="./tests/debug_dataset",
+                data_dir="/project/datasets",
                 load_camera_views=("primary", "wrist"),
                 load_depth=False,
                 force_recompute_dataset_statistics=False,
@@ -138,8 +137,8 @@ def get_config(config_string=None):
                     rephrase_prob=0.5,
                 ),
             ),
-            batch_size=512 // grad_accumulation_steps,
-            shuffle_buffer_size=int(5e5),
+            batch_size=512 // grad_accumulation_steps, # 512
+            shuffle_buffer_size=int(2e5), # 1e5
             balance_weights=True,
         ),
         text_processor=ModuleSpec.create(
@@ -163,7 +162,7 @@ def get_config(config_string=None):
         log_interval=200,
         eval_interval=5000,
         viz_interval=20000,
-        save_interval=10000,
+        save_interval=3000,
     )
 
     return config
