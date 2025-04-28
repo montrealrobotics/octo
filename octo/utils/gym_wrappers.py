@@ -148,7 +148,7 @@ class RHCWrapper(gym.Wrapper):
         infos["rewards"] = rewards
         infos["observations"] = observations
 
-        return obs, np.sum(rewards), done, trunc, infos
+        return obs, np.max(rewards), done, trunc, infos
 
 
 class TemporalEnsembleWrapper(gym.Wrapper):
