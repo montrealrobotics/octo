@@ -51,6 +51,30 @@ OXE_DATASET_CONFIGS = {
         "proprio_encoding": ProprioEncoding.POS_EULER,
         "action_encoding": ActionEncoding.EEF_POS,
     },
+    "liber_o10": {
+        "image_obs_keys": {"primary": "image", "secondary": None, "wrist": None},
+        "depth_obs_keys": {"primary": None, "secondary": None, "wrist": None},
+        "proprio_encoding": ProprioEncoding.POS_EULER,
+        "action_encoding": ActionEncoding.EEF_POS,
+    },
+    "libero_goal": {
+        "image_obs_keys": {"primary": "image", "secondary": None, "wrist": None},
+        "depth_obs_keys": {"primary": None, "secondary": None, "wrist": None},
+        "proprio_encoding": ProprioEncoding.POS_EULER,
+        "action_encoding": ActionEncoding.EEF_POS,
+    },
+    "libero_spatial": {
+        "image_obs_keys": {"primary": "image", "secondary": None, "wrist": None},
+        "depth_obs_keys": {"primary": None, "secondary": None, "wrist": None},
+        "proprio_encoding": ProprioEncoding.POS_EULER,
+        "action_encoding": ActionEncoding.EEF_POS,
+    },
+    "libero_object": {
+        "image_obs_keys": {"primary": "image", "secondary": None, "wrist": None},
+        "depth_obs_keys": {"primary": None, "secondary": None, "wrist": None},
+        "proprio_encoding": ProprioEncoding.POS_EULER,
+        "action_encoding": ActionEncoding.EEF_POS,
+    },
     "fractal20220817_data": {
         "image_obs_keys": {"primary": "image", "secondary": None, "wrist": None},
         "depth_obs_keys": {"primary": None, "secondary": None, "wrist": None},

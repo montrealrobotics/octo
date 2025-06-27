@@ -22,7 +22,7 @@ def get_config(config_string="full,language_conditioned"):
     else:
         raise ValueError("Invalid mode")
 
-    max_steps = FieldReference(50000)
+    max_steps = FieldReference(200000) #FieldReference(50000)
     window_size = FieldReference(default=1)
 
     workspace_augment_kwargs = dict(
@@ -52,23 +52,43 @@ def get_config(config_string="full,language_conditioned"):
     else:
         raise ValueError("Invalid modality")
 
+    # FINETUNING_KWARGS = { 
+    #     "name":  "libero_original_no_noops",
+    #     "data_dir": "/home/mila/m/michael.przystupa/scratch/modified_libero_rlds/libero_10_no_noops/1.0.0",
+    #     "image_obs_keys": {"primary": "image_0", "wrist": None},
+    #     "proprio_obs_key": "proprio",
+    #     "language_key": "language_instruction",
+    #     "action_proprio_normalization_type": "normal",
+    #     # We want to avoid normalizing the gripper
+    #     "action_normalization_mask": [True, True, True, True, True, True, False],
+    #     # standardize_fn is dynamically loaded from a file
+    #     # for example: "experiments/kevin/custom_standardization_transforms.py:aloha_dataset_transform"
+    #     "standardize_fn": ModuleSpec.create(
+    #         "octo.data.oxe.oxe_standardization_transforms:libero_dataset_transform",
+    #         #"octo.data.oxe.oxe_standardization_transforms:bridge_dataset_transform",
+    #     ),
+    #     # If the default data loading speed is too slow, try these:
+    #     # "num_parallel_reads": 8,  # for reading from disk / GCS
+    #     # "num_parallel_calls": 16,  # for initial dataset construction
+    # }
+
     config = dict(
-        pretrained_path=placeholder(str),
-        pretrained_step=placeholder(int),
+        pretrained_path="/home/mila/n/nearyc/scratch/octo/octo-base-1.5",
+        pretrained_step=300000,
         shuffle_buffer_size=10000,
         num_steps=max_steps,
         log_interval=100,
         eval_interval=5000,
-        eval_datasets=["libero_original_no_noops"],
+        eval_datasets=["liber_o10", "libero_spatial", "libero_goal", "libero_object"],
         save_interval=5000,
-        save_dir=placeholder(str),
+        save_dir="/home/mila/n/nearyc/scratch/octo/2025-06-21_octo_base_1p5_libero_finetune",
         seed=42,
         prefetch_num_batches=0,
         wandb=dict(project="octo_finetune", group=placeholder(str), entity=placeholder(str)),
         dataset_kwargs=dict(
             oxe_kwargs=dict(
-                data_mix="libero_augmented",
-                data_dir="/home/artur/tensorflow_datasets",
+                data_mix="libero_spatial_goal_object_10",
+                data_dir="/home/mila/n/nearyc/scratch/datasets/modified_libero_rlds",
                 load_camera_views=("primary",),
                 load_depth=False,
                 force_recompute_dataset_statistics=False,

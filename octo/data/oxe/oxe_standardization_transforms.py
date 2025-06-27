@@ -1069,4 +1069,8 @@ OXE_STANDARDIZATION_TRANSFORMS = {
     "mujoco_manip": mujoco_manip_dataset_transform,
     "libero_90_no_noops_subtasks": libero_dataset_transform,
     "libero_original_no_noops": libero_dataset_transform,
+    "liber_o10" : libero_dataset_transform,
+    "libero_spatial" : libero_dataset_transform,
+    "libero_object" : libero_dataset_transform,
+    "libero_goal" : libero_dataset_transform,
 }

@@ -175,6 +175,13 @@ LIBERO_ORIGINAL = [
     ("libero_original_no_noops", 1.0),
 ]
 
+LIBERO_SPATIAL_GOAL_OBECT_10 = [
+    ("liber_o10", 1.0),
+    ("libero_spatial", 1.0),
+    ("libero_object", 1.0),
+    ("libero_goal", 1.0),
+]
+
 OXE_NAMED_MIXES = {
     "bridge": BRIDGE_MIX,
     "rtx": RT_X_MIX,
@@ -183,4 +190,5 @@ OXE_NAMED_MIXES = {
     "oxe_flex_act_soup": OXE_FLEX_ACT_SOUP,
     "libero_augmented": LIBERO_AUGMENTED,
     "libero_original": LIBERO_ORIGINAL,
+    "libero_spatial_goal_object_10" : LIBERO_SPATIAL_GOAL_OBECT_10,
 }
