@@ -182,6 +182,14 @@ LIBERO_SPATIAL_GOAL_OBECT_10 = [
     ("libero_goal", 1.0),
 ]
 
+LIBERO_ALL_NO_NOOPS = [
+    ("libero_10_no_noops", 1.0),
+    ("libero_90_no_noops", 1.0),
+    ("libero_spatial_no_noops", 1.0),
+    ("libero_object_no_noops", 1.0),
+    ("libero_goal_no_noops", 1.0),
+]
+
 OXE_NAMED_MIXES = {
     "bridge": BRIDGE_MIX,
     "rtx": RT_X_MIX,
@@ -191,4 +199,5 @@ OXE_NAMED_MIXES = {
     "libero_augmented": LIBERO_AUGMENTED,
     "libero_original": LIBERO_ORIGINAL,
     "libero_spatial_goal_object_10" : LIBERO_SPATIAL_GOAL_OBECT_10,
+    "libero_all_no_noops" : LIBERO_ALL_NO_NOOPS,
 }

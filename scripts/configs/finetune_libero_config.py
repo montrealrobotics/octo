@@ -25,21 +25,6 @@ def get_config(config_string="full,language_conditioned"):
     max_steps = FieldReference(200000) #FieldReference(50000)
     window_size = FieldReference(default=1)
 
-    workspace_augment_kwargs = dict(
-        random_resized_crop=dict(scale=[0.8, 1.0], ratio=[0.9, 1.1]),
-        random_brightness=[0.1],
-        random_contrast=[0.9, 1.1],
-        random_saturation=[0.9, 1.1],
-        random_hue=[0.05],
-        augment_order=[
-            "random_resized_crop",
-            "random_brightness",
-            "random_contrast",
-            "random_saturation",
-            "random_hue",
-        ],
-    )
-
     if task == "image_conditioned":
         goal_relabeling_strategy = "uniform"
         keep_image_prob = 1.0
@@ -78,18 +63,21 @@ def get_config(config_string="full,language_conditioned"):
         shuffle_buffer_size=10000,
         num_steps=max_steps,
         log_interval=100,
-        eval_interval=5000,
-        eval_datasets=["liber_o10", "libero_spatial", "libero_goal", "libero_object"],
-        save_interval=5000,
-        save_dir="/home/mila/n/nearyc/scratch/octo/2025-06-21_octo_base_1p5_libero_finetune",
+        eval_interval=1000,
+        eval_datasets=["libero_10_no_noops", "libero_90_no_noops", "libero_spatial_no_noops", "libero_object_no_noops", "libero_goal_no_noops"],
+        # eval_datasets=["liber_o10", "libero_spatial", "libero_goal", "libero_object"],
+        save_interval=1000,
+        save_dir="/home/mila/n/nearyc/scratch/octo/2025-07-11_octo_base_1p5_libero_all_finetune_wrist",
         seed=42,
         prefetch_num_batches=0,
         wandb=dict(project="octo_finetune", group=placeholder(str), entity=placeholder(str)),
         dataset_kwargs=dict(
             oxe_kwargs=dict(
-                data_mix="libero_spatial_goal_object_10",
-                data_dir="/home/mila/n/nearyc/scratch/datasets/modified_libero_rlds",
-                load_camera_views=("primary",),
+                # data_mix="libero_spatial_goal_object_10",
+                # data_dir="/home/mila/n/nearyc/scratch/datasets/modified_libero_rlds",
+                data_mix="libero_all_no_noops",
+                data_dir="/network/projects/real-g-grp/modified_libero_rlds",
+                load_camera_views=("primary", "wrist"),
                 load_depth=False,
                 force_recompute_dataset_statistics=False,
             ),
@@ -104,7 +92,7 @@ def get_config(config_string="full,language_conditioned"):
                 # If the default data loading speed is too slow, try these:
                 # num_parallel_calls=16,  # for less CPU-intensive ops
             ),
-            batch_size=256,
+            batch_size=128, # 256
             shuffle_buffer_size=10000,
         ),
         modality=task,
@@ -139,13 +127,41 @@ def get_config(config_string="full,language_conditioned"):
         )
     )
 
+    workspace_augment_kwargs = dict(
+        random_resized_crop=dict(scale=[0.8, 1.0], ratio=[0.9, 1.1]),
+        random_brightness=[0.1],
+        random_contrast=[0.9, 1.1],
+        random_saturation=[0.9, 1.1],
+        random_hue=[0.05],
+        augment_order=[
+            "random_resized_crop",
+            "random_brightness",
+            "random_contrast",
+            "random_saturation",
+            "random_hue",
+        ],
+    )
+    wrist_augment_kwargs = dict(
+        random_brightness=[0.1],
+        random_contrast=[0.9, 1.1],
+        random_saturation=[0.9, 1.1],
+        random_hue=[0.05],
+        augment_order=[
+            "random_brightness",
+            "random_contrast",
+            "random_saturation",
+            "random_hue",
+        ],
+    )
+
     frame_transform_kwargs = dict(
         resize_size={
             "primary": (256, 256),  # workspace (3rd person) camera is at 256x256
+            "wrist": (128, 128), # wrist camera is at 128x128
         },
         image_augment_kwargs=dict(
             primary=workspace_augment_kwargs,
-            # wrist=wrist_augment_kwargs,
+            wrist=wrist_augment_kwargs,
         ),
     )
     # If the default data loading speed is too slow, try these:
