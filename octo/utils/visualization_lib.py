@@ -204,9 +204,9 @@ class Visualizer:
             info = add_unnormalized_info(info, self.action_proprio_stats)
             info = add_manipulation_metrics(info)
 
-            if "unnorm_proprio" in info:
-                plotly_fig = plot_trajectory_actions(**info)
-                visualizations[f"traj_{n}"] = plotly_fig
+            # if "unnorm_proprio" in info:
+            #     plotly_fig = plot_trajectory_actions(**info)
+            #     visualizations[f"traj_{n}"] = plotly_fig
 
             # plot qualitative action trajectory per dimension w/ and w/o action chunk
             visualizations[f"traj_{n}_mpl"] = plot_trajectory_overview_mpl(

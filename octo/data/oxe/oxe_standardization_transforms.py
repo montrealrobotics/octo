@@ -946,6 +946,37 @@ def aloha_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
     return trajectory
 
 
+def dex_mimic(trajectory: Dict[str, Any]) -> Dict[str, Any]:
+    # relabel actions to convert from 20Hz to 10Hz
+    # factor = 2
+    
+    # actions = trajectory["action"]
+
+    # n_samples = tf.shape(actions)[0]
+    # if n_samples % 2 != 0:
+    #     actions = actions[:-1]
+    
+    # reshaped = tf.reshape(actions, (-1, 2, actions.shape[1]))
+    
+    # pose_actions = tf.reduce_mean(reshaped[:, :, :6], axis=1)
+    
+    # gripper_actions = reshaped[:, -1, 6:] 
+    
+    # new_actions = tf.concat([pose_actions, gripper_actions], axis=1)
+    
+    # new_actions = tf.clip_by_value(new_actions, -1.0, 1.0)
+
+    # if n_samples % 2 != 0:
+    #     trajectory = tf.nest.map_structure(lambda x: x[:-1:factor], trajectory) 
+    # else:
+    #     trajectory = tf.nest.map_structure(lambda x: x[::factor], trajectory)
+    # trajectory["action"] = new_actions
+    trajectory["observation"]["proprio"] = trajectory["observation"]["joint_state"]
+    trajectory["action"] = trajectory["pca_action"]
+
+    return trajectory
+
+
 def fmb_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
     # every input feature is batched, ie has leading batch dimension
     trajectory["observation"]["proprio"] = tf.concat(
@@ -1067,6 +1098,22 @@ OXE_STANDARDIZATION_TRANSFORMS = {
     "roboset": roboset_dataset_transform,
     "rh20t": rh20t_dataset_transform,
     "mujoco_manip": mujoco_manip_dataset_transform,
-    "libero_90_no_noops_subtasks": libero_dataset_transform,
-    "libero_original_no_noops": libero_dataset_transform,
+    "libero_90_single_task": libero_dataset_transform,
+    "libero_90_single_task_segmented": libero_dataset_transform,
+    "libero_90_two_task": libero_dataset_transform,
+    "libero_90_two_task_segmented": libero_dataset_transform,
+    "libero_90_subtasks": libero_dataset_transform,
+    "libero_90_original": libero_dataset_transform,
+    "libero_10_subtasks": libero_dataset_transform,
+    "libero_10_original_no_noops": libero_dataset_transform,
+    "libero_90": libero_dataset_transform,
+    "libero_90_subtasks_augmented": libero_dataset_transform,
+    "libero_10_subtasks_augmented": libero_dataset_transform,
+    "libero_90_subtasks_cumul_aug": libero_dataset_transform,
+    "libero_10_subtasks_cumul_aug": libero_dataset_transform,
+    "libero_90_subtasks_grouped_aug": libero_dataset_transform,
+    "libero_10_subtasks_grouped_aug": libero_dataset_transform,
+    "bridge_subtasks": bridge_dataset_transform,
+    "bridge_original": bridge_dataset_transform,
+    "dex_mimic": dex_mimic,
 }

@@ -184,6 +184,9 @@ class ValidationCallback(Callback):
     text_processor: Optional[TextProcessor]
     val_dataset_kwargs_list: Sequence[Mapping[str, Any]]
     dataset_kwargs: Mapping[str, Any]
+    traj_transform_kwargs: Mapping[str, Any]
+    frame_transform_kwargs: Mapping[str, Any]
+    batch_size: int
     val_shuffle_buffer_size: int
     num_val_batches: int
     modes_to_evaluate: Sequence[str] = ("text_conditioned", "image_conditioned")
@@ -200,15 +203,15 @@ class ValidationCallback(Callback):
         for single_dataset_kwargs in self.val_dataset_kwargs_list:
             val_dataset = create_validation_dataset(
                 single_dataset_kwargs,
-                self.dataset_kwargs["traj_transform_kwargs"],
-                self.dataset_kwargs["frame_transform_kwargs"],
+                self.traj_transform_kwargs,
+                self.frame_transform_kwargs,
                 train=self.train,
             )
             val_iterator = (
                 val_dataset.unbatch()
                 .shuffle(self.val_shuffle_buffer_size)
                 .repeat()
-                .batch(self.dataset_kwargs["batch_size"])
+                .batch(self.batch_size)
                 .iterator(prefetch=0)
             )
             val_iterator = map(self.process_batch_fn, val_iterator)
@@ -267,6 +270,8 @@ class VisualizationCallback(Callback):
     text_processor: TextProcessor
     val_dataset_kwargs_list: Sequence[Mapping[str, Any]]
     dataset_kwargs: Mapping[str, Any]
+    traj_transform_kwargs: Mapping[str, Any]
+    frame_transform_kwargs: Mapping[str, Any]
     eval_batch_size: int
     trajs_for_metrics: int
     trajs_for_viz: int
@@ -286,8 +291,8 @@ class VisualizationCallback(Callback):
         for single_dataset_kwargs in self.val_dataset_kwargs_list:
             val_dataset = create_validation_dataset(
                 single_dataset_kwargs,
-                self.dataset_kwargs["traj_transform_kwargs"],
-                self.dataset_kwargs["frame_transform_kwargs"],
+                self.traj_transform_kwargs,
+                self.frame_transform_kwargs,
                 train=self.train,
             )
             self.visualizers[single_dataset_kwargs["name"]] = Visualizer(

@@ -22,7 +22,7 @@ def get_config(config_string="full,language_conditioned"):
     else:
         raise ValueError("Invalid mode")
 
-    max_steps = FieldReference(50000)
+    max_steps = FieldReference(30000)
     window_size = FieldReference(default=1)
 
     workspace_augment_kwargs = dict(
@@ -55,11 +55,11 @@ def get_config(config_string="full,language_conditioned"):
     config = dict(
         pretrained_path=placeholder(str),
         pretrained_step=placeholder(int),
-        shuffle_buffer_size=10000,
+        shuffle_buffer_size=75000,
         num_steps=max_steps,
         log_interval=100,
         eval_interval=5000,
-        eval_datasets=["libero_original_no_noops"],
+        eval_datasets=["bridge_original", "bridge_subtasks"],
         save_interval=5000,
         save_dir=placeholder(str),
         seed=42,
@@ -67,8 +67,8 @@ def get_config(config_string="full,language_conditioned"):
         wandb=dict(project="octo_finetune", group=placeholder(str), entity=placeholder(str)),
         dataset_kwargs=dict(
             oxe_kwargs=dict(
-                data_mix="libero_augmented",
-                data_dir="/home/artur/tensorflow_datasets",
+                data_mix="bridge_mix",
+                data_dir="/project/datasets",
                 load_camera_views=("primary",),
                 load_depth=False,
                 force_recompute_dataset_statistics=False,
@@ -85,7 +85,7 @@ def get_config(config_string="full,language_conditioned"):
                 # num_parallel_calls=16,  # for less CPU-intensive ops
             ),
             batch_size=256,
-            shuffle_buffer_size=10000,
+            shuffle_buffer_size=75000,
         ),
         modality=task,
         finetuning_mode=mode,

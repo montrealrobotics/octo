@@ -35,12 +35,12 @@ def get_config(config_string=None):
             task_stack_keys=["image_primary"],
             encoder=ModuleSpec.create(SmallStem16),
         ),
-        "wrist": ModuleSpec.create(
-            ImageTokenizer,
-            obs_stack_keys=["image_wrist"],
-            task_stack_keys=["image_wrist"],
-            encoder=ModuleSpec.create(SmallStem16),
-        ),
+        # "wrist": ModuleSpec.create(
+        #     ImageTokenizer,
+        #     obs_stack_keys=["image_wrist"],
+        #     task_stack_keys=["image_wrist"],
+        #     encoder=ModuleSpec.create(SmallStem16),
+        # ),
     }
     config["model"]["task_tokenizers"] = {
         "language": ModuleSpec.create(
@@ -76,18 +76,18 @@ def get_config(config_string=None):
             "random_hue",
         ],
     )
-    wrist_augment_kwargs = dict(
-        random_brightness=[0.1],
-        random_contrast=[0.9, 1.1],
-        random_saturation=[0.9, 1.1],
-        random_hue=[0.05],
-        augment_order=[
-            "random_brightness",
-            "random_contrast",
-            "random_saturation",
-            "random_hue",
-        ],
-    )
+    # wrist_augment_kwargs = dict(
+    #     random_brightness=[0.1],
+    #     random_contrast=[0.9, 1.1],
+    #     random_saturation=[0.9, 1.1],
+    #     random_hue=[0.05],
+    #     augment_order=[
+    #         "random_brightness",
+    #         "random_contrast",
+    #         "random_saturation",
+    #         "random_hue",
+    #     ],
+    # )
 
     # ML-collections complains if the type of an existing field changes
     # so we delete and re-add the field
@@ -97,17 +97,17 @@ def get_config(config_string=None):
 
     config["dataset_kwargs"]["frame_transform_kwargs"]["resize_size"] = {
         "primary": (256, 256),  # workspace camera is at 256x256
-        "wrist": (128, 128),  # wrist camera is at 128x128
+        # "wrist": (128, 128),  # wrist camera is at 128x128
     }
     config["dataset_kwargs"]["frame_transform_kwargs"]["image_augment_kwargs"] = {
         "primary": primary_augment_kwargs,
-        "wrist": wrist_augment_kwargs,
+        # "wrist": wrist_augment_kwargs,
     }
 
-    grad_accumulation_steps = 1
+    grad_accumulation_steps = 2
     config = update_config(
         config,
-        num_steps=300000,
+        num_steps=100000,
         window_size=2,
         optimizer=dict(
             frozen_keys=("*hf_model*",),
@@ -122,24 +122,24 @@ def get_config(config_string=None):
         ),
         dataset_kwargs=dict(
             oxe_kwargs=dict(
-                data_mix="bridge",
-                data_dir="./tests/debug_dataset",
-                load_camera_views=("primary", "wrist"),
+                data_mix="libero_90",
+                data_dir="/project/datasets",
+                load_camera_views=("primary",),#, "wrist"),
                 load_depth=False,
                 force_recompute_dataset_statistics=False,
             ),
             traj_transform_kwargs=dict(
                 action_horizon=4,
                 max_action_dim=action_dim,
-                task_augment_strategy="delete_and_rephrase",
-                task_augment_kwargs=dict(
-                    paraphrases_repo="rail-berkeley/OXE_paraphrases",
-                    paraphrases_filename="paraphrases_oxe.pkl",
-                    rephrase_prob=0.5,
-                ),
+                # task_augment_strategy="delete_and_rephrase",
+                # task_augment_kwargs=dict(
+                #     paraphrases_repo="rail-berkeley/OXE_paraphrases",
+                #     paraphrases_filename="paraphrases_oxe.pkl",
+                #     rephrase_prob=0.5,
+                # ),
             ),
             batch_size=512 // grad_accumulation_steps,
-            shuffle_buffer_size=int(5e5),
+            shuffle_buffer_size=int(2e5),
             balance_weights=True,
         ),
         text_processor=ModuleSpec.create(
@@ -159,7 +159,7 @@ def get_config(config_string=None):
                 hf_model="t5-base",
             ),
         ),
-        eval_datasets=["bridge_dataset"],
+        eval_datasets=["libero_90"],
         log_interval=200,
         eval_interval=5000,
         viz_interval=20000,

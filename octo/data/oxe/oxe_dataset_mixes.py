@@ -166,21 +166,173 @@ OXE_FULL_MIX = [
     ("gnm_dataset", 1.0),
 ]
 
-LIBERO_AUGMENTED = [
-    ("libero_90_no_noops_subtasks", 1.0),
-    ("libero_original_no_noops", 1.0),
+LIBERO_90_AUGMENTED = [
+    ("libero_90_subtasks", 1.0),
+    ("libero_90_original", 1.0),
 ]
 
-LIBERO_ORIGINAL = [
-    ("libero_original_no_noops", 1.0),
+LIBERO_90_ORIGINAL = [
+    ("libero_90_original", 1.0),
+]
+
+LIBERO_90_SINGLE_TASK = [
+    ("libero_90_single_task", 1.0),
+]
+
+LIBERO_90_SINGLE_TASK_SEGMENTED = [
+    ("libero_90_single_task_segmented", 1.0),
+]
+
+LIBERO_90_SINGLE_TASK_MIX = [
+    ("libero_90_single_task", 1.0),
+    ("libero_90_single_task_segmented", 1.0),
+]
+
+LIBERO_90_TWO_TASK = [
+    ("libero_90_two_task", 1.0),
+]
+
+LIBERO_90_TWO_TASK_SEGMENTED = [
+    ("libero_90_two_task_segmented", 1.0),
+]
+
+LIBERO_90_TWO_TASK_MIX = [
+    ("libero_90_two_task", 1.0),
+    ("libero_90_two_task_segmented", 1.0),
+]
+
+LIBERO_90_SUBTASKS = [
+    ("libero_90_subtasks", 1.0)
+]
+
+LIBERO_90 = [
+    ("libero_90", 1.0)
+]
+
+LIBERO_10_AUGMENTED = [
+    ("libero_10_subtasks", 1.0),
+    ("libero_10_original_no_noops", 1.0),
+]
+
+LIBERO_10_ORIGINAL = [
+    ("libero_10_original_no_noops", 1.0),
+]
+
+LIBERO_10_SUBTASKS = [
+    ("libero_10_subtasks", 1.0)
+]
+
+LIBERO_100_AUGMENTED = [
+    ("libero_90_subtasks", 1.0),
+    ("libero_90_original", 2.0),
+    ("libero_10_subtasks", 1.0),
+    ("libero_10_original_no_noops", 1.0),
+]
+
+LIBERO_100_AUGMENTED_REMIX = [
+    ("libero_90_subtasks", 0.21817),
+    ("libero_90_original", 0.26868),
+    ("libero_10_subtasks", 0.22871),
+    ("libero_10_original_no_noops", 0.28444),
+]
+
+LIBERO_100_AUGMENTED_DIVERSITY = [
+    ("libero_90_subtasks_augmented", 0.15861),
+    ("libero_90_original", 0.27521),
+    ("libero_10_subtasks_augmented", 0.10757),
+    ("libero_10_original_no_noops", 1.0),
+]
+
+LIBERO_100_AUGMENTED_DIVERSITY_REMIX = [
+    ("libero_90_subtasks_augmented", 0.23429),
+    ("libero_90_original", 0.26724),
+    ("libero_10_subtasks_augmented", 0.24023),
+    ("libero_10_original_no_noops", 0.25997),
+]
+
+LIBERO_FULL = [
+    ("libero_90_subtasks_augmented", 0.15861),
+    ("libero_90_original", 0.27521),
+    ("libero_10_subtasks_augmented", 0.10757),
+    ("libero_10_original_no_noops", 0.19181),
+    ("libero_90_subtasks", 0.13721),
+    ("libero_10_subtasks", 0.12958),
+]
+
+LIBERO_100_AUGMENTED_CUMUL_DIVERSITY = [
+    ("libero_90_subtasks_cumul_aug", 0.75),
+    ("libero_90_original", 2.0),
+    ("libero_10_subtasks_cumul_aug", 0.75),
+    ("libero_10_original_no_noops", 1.0),
+]
+
+LIBERO_100_AUGMENTED_GROUPED_DIVERSITY = [
+    ("libero_90_subtasks_grouped_aug", 0.45),
+    ("libero_90_original", 2.0),
+    ("libero_10_subtasks_grouped_aug", 0.3),
+    ("libero_10_original_no_noops", 1.0),
+]
+
+LIBERO_100_ORIGINAL = [
+    ("libero_90_original", 2.0),
+    ("libero_10_original_no_noops", 1.0),
+]
+
+LIBERO_100_SUBTASKS = [
+    ("libero_90_subtasks", 1.0),
+    ("libero_10_subtasks", 1.0),
+]
+
+LIBERO_100_ORIGINAL_REMIX = [
+    ("libero_90_original", 0.48303),
+    ("libero_10_original_no_noops", 0.51697),
+]
+
+
+LIBERO_100_SUBTASKS_AUGMENTED = [
+    ("libero_90_subtasks_augmented", 1.0),
+    ("libero_10_subtasks_augmented", 1.0),
+]
+
+BRIDGE_SUBTASKS_MIX = [
+    ("bridge_original", 0.55438),
+    ("bridge_subtasks", 0.44562),
+]
+
+BRIDGE_ORIGINAL= [
+    ("bridge_original", 1.0),
 ]
 
 OXE_NAMED_MIXES = {
     "bridge": BRIDGE_MIX,
+    "bridge_mix": BRIDGE_SUBTASKS_MIX,
+    "bridge_original": BRIDGE_SUBTASKS_MIX,
     "rtx": RT_X_MIX,
     "rtx_franka": RT_X_MIX + OXE_FRANKA_MIX,
     "oxe_magic_soup": OXE_MAGIC_SOUP,
     "oxe_flex_act_soup": OXE_FLEX_ACT_SOUP,
-    "libero_augmented": LIBERO_AUGMENTED,
-    "libero_original": LIBERO_ORIGINAL,
+    "libero_90_augmented": LIBERO_90_AUGMENTED,
+    "libero_90_original": LIBERO_90_ORIGINAL,
+    "libero_90_single_task": LIBERO_90_SINGLE_TASK,
+    "libero_90_single_task_segmented": LIBERO_90_SINGLE_TASK_SEGMENTED,
+    "libero_90_single_task_mix": LIBERO_90_SINGLE_TASK_MIX,
+    "libero_90_two_task": LIBERO_90_TWO_TASK,
+    "libero_90_two_task_segmented": LIBERO_90_TWO_TASK_SEGMENTED,
+    "libero_90_two_task_mix": LIBERO_90_TWO_TASK_MIX,
+    "libero_90": LIBERO_90,
+    "libero_90_subtasks": LIBERO_90_SUBTASKS,
+    "libero_10_augmented": LIBERO_10_AUGMENTED,
+    "libero_10_original": LIBERO_10_ORIGINAL,
+    "libero_10_subtasks": LIBERO_10_SUBTASKS,
+    "libero_100_augmented": LIBERO_100_AUGMENTED,
+    "libero_100_augmented_remix": LIBERO_100_AUGMENTED_REMIX,
+    "libero_100_original": LIBERO_100_ORIGINAL,
+    "libero_100_original_remix": LIBERO_100_ORIGINAL_REMIX,
+    "libero_100_subtasks": LIBERO_100_SUBTASKS,
+    "libero_100_subtasks_augmented": LIBERO_100_SUBTASKS_AUGMENTED,
+    "libero_100_augmented_diversity": LIBERO_100_AUGMENTED_DIVERSITY,
+    "libero_100_augmented_diversity_remix": LIBERO_100_AUGMENTED_DIVERSITY_REMIX,
+    "libero_100_augmented_grouped": LIBERO_100_AUGMENTED_CUMUL_DIVERSITY,
+    "libero_100_augmented_grouped_diversity": LIBERO_100_AUGMENTED_GROUPED_DIVERSITY,
+    "libero_full": LIBERO_FULL,
 }
