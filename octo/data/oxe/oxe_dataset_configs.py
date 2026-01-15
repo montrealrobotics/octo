@@ -24,6 +24,8 @@ class ProprioEncoding(IntEnum):
     JOINT = 3  # joint angles + gripper open/close
     JOINT_BIMANUAL = 4  # 2 x [6 x joint angles + gripper open/close]
     POS_NAV = 5  # XY + yaw
+    POS_DEX = 6  # [EEF XYZ + quaternion] + [6 x finger joints]
+    JOINT_DEX = 7 # 7 x joint angles + 6 x finger joints
 
 
 class ActionEncoding(IntEnum):
@@ -36,9 +38,17 @@ class ActionEncoding(IntEnum):
     JOINT_POS_BIMANUAL_NAV = (
         5  # 2 x [6 x joint pos + gripper] + linear base vel + angular base vel
     )
+    EEF_POS_DEX = 6 # [EEF delta XYZ + axis-angle] + [6 x finger joint pos]
+    EEF_POS_DEX_PCA = 7 # [EEF delta XYZ + axis-angle] + [2 x eigen grasp pos]
 
 
 OXE_DATASET_CONFIGS = {
+    "dex_mimic": {
+        "image_obs_keys": {"primary": "image", "secondary": None, "wrist": "wrist_image"},
+        "depth_obs_keys": {"primary": None, "secondary": None, "wrist": None},
+        "proprio_encoding": ProprioEncoding.POS_DEX,
+        "action_encoding": ActionEncoding.EEF_POS_DEX_PCA,
+    },
     "fractal20220817_data": {
         "image_obs_keys": {"primary": "image", "secondary": None, "wrist": None},
         "depth_obs_keys": {"primary": None, "secondary": None, "wrist": None},

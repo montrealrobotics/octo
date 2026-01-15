@@ -53,6 +53,12 @@ def make_oxe_dataset_kwargs(
         dataset_kwargs["action_normalization_mask"] = (
             [True] * 6 + [False] + [True] * 6 + [False] + [True] * 2
         )
+    elif dataset_kwargs["action_encoding"] is ActionEncoding.EEF_POS_DEX:
+        # gripper is 6 dof fingers so all normalized
+        dataset_kwargs["action_normalization_mask"] = [True] * 12
+    elif dataset_kwargs["action_encoding"] is ActionEncoding.EEF_POS_DEX_PCA:
+        # with EEF_POS actions, last 2 action dimension is eigen grasp pos
+        dataset_kwargs["action_normalization_mask"] = [True] * 8
     else:
         raise ValueError(
             f"Cannot load {name} with unsupported action encoding {dataset_kwargs['action_encoding']}."

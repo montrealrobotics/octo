@@ -469,7 +469,7 @@ def quaternion_conjugate(q):
     return tf.concat([-q[..., :3], q[..., 3:4]], axis=-1)
 
 def quaternion_multiply(q1, q2):
-    """Multiply two quaternions."""
+    """Multiply two quaternions (q2 * q1)."""
     x1, y1, z1, w1 = tf.unstack(q1, axis=-1)
     x2, y2, z2, w2 = tf.unstack(q2, axis=-1)
 
@@ -510,8 +510,14 @@ def compute_relative_pose(pose1, pose2):
 
     relative_translation = trans2 - trans1
 
-    q1 = euler_to_quaternion(rot1)
-    q2 = euler_to_quaternion(rot2)
+    if rot1.shape[-1] != 4:
+        q1 = euler_to_quaternion(rot1)
+    else:
+        q1 = rot1
+    if rot2.shape[-1] != 4:
+        q2 = euler_to_quaternion(rot2)
+    else:
+        q2 = rot2
 
     q1_inv = quaternion_conjugate(q1)
     relative_rotation = quaternion_multiply(q2, q1_inv)
