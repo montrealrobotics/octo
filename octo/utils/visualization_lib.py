@@ -295,7 +295,42 @@ class RolloutVisualizer:
     action_proprio_metadata: Optional[dict] = None
 
     def __post_init__(self):
-        self._env = gym.make(self.env_name, **self.env_kwargs)
+        # Handle dexmimicgen environments specially
+        if self.env_name.startswith("dexmimicgen"):
+            # Import here to avoid circular imports
+            try:
+                from examples.envs.dexmimicgen_env import DexMimicGenGymEnv
+                # Extract env_name from the gym registered name
+                # e.g., "dexmimicgen-two-arm-drawer-cleanup-v0" -> "TwoArmDrawerCleanup"
+                if self.env_name == "dexmimicgen-single-arm-drawer-cleanup-v0":
+                    dex_env_name = "SingleArmDrawerCleanup"
+                    robots = ["PandaDexRH"]
+                elif self.env_name == "dexmimicgen-two-arm-drawer-cleanup-v0":
+                    dex_env_name = "TwoArmDrawerCleanup"
+                    robots = ["PandaDexRH", "PandaDexLH"]
+                else:
+                    raise ValueError(f"Unknown dexmimicgen environment: {self.env_name}")
+
+                # Create DexMimicGenGymEnv directly
+                env_kwargs_copy = self.env_kwargs.copy()
+                pca_config = env_kwargs_copy.pop("pca_config", None)
+                self._env = DexMimicGenGymEnv(
+                    dex_env_name,
+                    robots=robots,
+                    camera_names=["agentview", "robot0_eye_in_hand"],
+                    camera_heights=[256, 128],
+                    camera_widths=[256, 128],
+                    **env_kwargs_copy
+                )
+
+                # Apply PCA wrapper if configured
+                if pca_config is not None and hasattr(self._env, 'apply_pca_wrapper'):
+                    self._env = self._env.apply_pca_wrapper(pca_config)
+            except ImportError as e:
+                raise ImportError(f"Could not import DexMimicGenGymEnv: {e}. Make sure dexmimicgen is properly installed.")
+        else:
+            self._env = gym.make(self.env_name, **self.env_kwargs)
+
         if self.action_proprio_metadata is not None:
             self._env = NormalizeProprio(self._env, self.action_proprio_metadata)
         self._env = HistoryWrapper(
