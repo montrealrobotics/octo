@@ -204,9 +204,9 @@ class Visualizer:
             info = add_unnormalized_info(info, self.action_proprio_stats)
             info = add_manipulation_metrics(info)
 
-            if "unnorm_proprio" in info:
-                plotly_fig = plot_trajectory_actions(**info)
-                visualizations[f"traj_{n}"] = plotly_fig
+            # if "unnorm_proprio" in info:
+            #     plotly_fig = plot_trajectory_actions(**info)
+            #     visualizations[f"traj_{n}"] = plotly_fig
 
             # plot qualitative action trajectory per dimension w/ and w/o action chunk
             visualizations[f"traj_{n}_mpl"] = plot_trajectory_overview_mpl(
@@ -299,7 +299,7 @@ class RolloutVisualizer:
         if self.env_name.startswith("dexmimicgen"):
             # Import here to avoid circular imports
             try:
-                from examples.envs.dexmimicgen_env import DexMimicGenGymEnv
+                from octo.dexmimic.dexmimicgen_env import DexMimicGenGymEnv
                 # Extract env_name from the gym registered name
                 # e.g., "dexmimicgen-two-arm-drawer-cleanup-v0" -> "TwoArmDrawerCleanup"
                 if self.env_name == "dexmimicgen-single-arm-drawer-cleanup-v0":

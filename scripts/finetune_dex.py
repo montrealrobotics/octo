@@ -17,7 +17,7 @@ import wandb
 from octo.data.dataset import make_single_dataset
 from octo.data.oxe import make_oxe_dataset_kwargs_and_weights
 from octo.model.octo_model import OctoModel
-from octo.model.components.action_heads import L1ActionHead
+from octo.model.components.action_heads import L1ActionHead, DiffusionActionHead
 from octo.model.components.tokenizers import LowdimObsTokenizer
 from octo.utils.jax_utils import initialize_compilation_cache
 from octo.utils.spec import ModuleSpec
@@ -237,12 +237,22 @@ def main(_):
         high=2.0,
         obs_keys=["proprio"],
     )
+    action_dim = 12
     # Fully override the old action head with a new one (for smaller changes, you can use update_config)
+    # config["model"]["heads"]["action"] = ModuleSpec.create(
+    #     L1ActionHead,
+    #     action_horizon=4,
+    #     action_dim=action_dim,
+    #     readout_key="readout_action",
+    # )
     config["model"]["heads"]["action"] = ModuleSpec.create(
-        L1ActionHead,
-        action_horizon=4,
-        action_dim=8, # 12
+        DiffusionActionHead,
         readout_key="readout_action",
+        use_map=False,
+        action_horizon=4,
+        action_dim=action_dim,
+        n_diffusion_samples=1,
+        dropout_rate=0.0,
     )
 
     model = OctoModel.from_config(
@@ -412,7 +422,8 @@ def main(_):
     if "rollout_kwargs" in FLAGS.config:
         rollout_callback = RolloutVisualizationCallback(
             text_processor=text_processor,
-            unnormalization_statistics=dataset.dataset_statistics["action"],
+            # unnormalization_statistics=dataset.dataset_statistics["action"],
+            action_proprio_metadata=dataset.dataset_statistics,
             **FLAGS.config.rollout_kwargs.to_dict(),
         )
     else:
